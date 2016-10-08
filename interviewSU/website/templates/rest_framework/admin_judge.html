@@ -1,0 +1,219 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load rest_framework %}
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+
+            {% block meta %}
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+                <meta name="robots" content="NONE,NOARCHIVE" />
+            {% endblock %}
+
+            <title>{% block title %}Interview SU{% endblock %}</title>
+
+            {% block style %}
+                {% block bootstrap_theme %}
+                    <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap.min.css" %}"/>
+                    <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap-tweaks.css" %}"/>
+                {% endblock %}
+                <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/prettify.css" %}"/>
+                <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/default.css" %}"/>
+            {% endblock %}
+
+        {% endblock %}
+    </head>
+
+    {% block body %}
+    <body class="{% block bodyclass %}{% endblock %}">
+
+        <div class="wrapper">
+
+            {% block navbar %}
+                <div class="navbar navbar-static-top {% block bootstrap_navbar_variant %}navbar-inverse{% endblock %}">
+                    <div class="container">
+                        <span>
+                            {% block branding %}
+                                <a class='navbar-brand' rel="nofollow" href='/'>
+                                    Interview SU <span class="version">{{ version }}</span>
+                                </a>
+                            {% endblock %}
+                        </span>
+                        {% if not user.is_authenticated %}
+                        <span><a class='navbar-brand' rel="nofollow" href='/user/'>Register new account</a></span>
+                        {% endif %}
+                        {% if user.interviewee %}
+                        <span><a class='navbar-brand' rel="nofollow" href='/register/'>Queue Registration</a></span>
+                        {% endif %}
+                        {% if user.interviewer %}
+                        <span><a class='navbar-brand' rel="nofollow" href='/admin/'>Admin Page</a></span>
+                        <span><a class='navbar-brand' rel="nofollow" href='/judge/'>Judging Page</a></span>
+                        {% endif %}
+                        {% if user.boss %}
+                        <span><a class='navbar-brand' rel="nofollow" href='/result/'>Result Page</a></span>
+                        {% endif %}
+                        <ul class="nav navbar-nav pull-right">
+                            {% block userlinks %}
+                                {% if user.is_authenticated %}
+                                    {% optional_logout request user %}
+                                {% else %}
+                                    {% optional_login request %}
+                                {% endif %}
+                            {% endblock %}
+                        </ul>
+                    </div>
+                </div>
+            {% endblock %}
+
+            <div class="container">
+            {% block breadcrumbs %}
+                <ul class="breadcrumb">
+                    {% for breadcrumb_name, breadcrumb_url in breadcrumblist %}
+                        {% if forloop.last %}
+                            <li class="active"><a href="{{ breadcrumb_url }}">{{ breadcrumb_name }}</a></li>
+                        {% else %}
+                            <li><a href="{{ breadcrumb_url }}">{{ breadcrumb_name }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% endblock %}
+
+            <!-- Content -->
+            <div id="content">
+
+                <div class="content-main">
+                    <div class="page-header">
+                        <h1>{{ name }}</h1>
+                    </div>
+                    <div style="float:left">
+                    {% block description %}
+                        {{ description }}
+                    {% endblock %}
+                    </div>
+
+                    {% if paginator %}
+                        <nav style="float: right">
+                        {% get_pagination_html paginator %}
+                        </nav>
+                    {% endif %}
+
+                    <div class="request-info" style="clear: both" >
+                        {% if style == 'list' %}
+                            {% include "rest_framework/admin/list_judge.html" %}
+                        {% else %}
+                            {% include "rest_framework/admin/detail_judge.html" %}
+                        {% endif %}
+                    </div>
+
+                    {% if paginator %}
+                        <nav style="float: right">
+                        {% get_pagination_html paginator %}
+                        </nav>
+                    {% endif %}
+                </div>
+
+            </div>
+            <!-- END Content -->
+            </div><!-- /.container -->
+        </div><!-- ./wrapper -->
+
+<!-- Create Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Create</h4>
+      </div>
+      <form action="{{ request.get_full_path }}" method="POST" enctype="multipart/form-data" class="form-horizontal" novalidate>
+        <div class="modal-body">
+          <fieldset>
+            {{ post_form }}
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Edit</h4>
+      </div>
+      <form action="{{ request.get_full_path }}" data-method="PUT" enctype="multipart/form-data" class="form-horizontal" novalidate>
+        <div class="modal-body">
+          <fieldset>
+            {{ put_form }}
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% if error_form %}
+<!-- Errors Modal -->
+<div class="modal" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{ error_title }}</h4>
+      </div>
+      <form action="{{ request.get_full_path }}" data-method="{{ request.method }}" enctype="multipart/form-data" class="form-horizontal" novalidate>
+        <div class="modal-body">
+          <fieldset>
+            {{ error_form }}
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if filter_form %}{{ filter_form }}{% endif %}
+
+        {% block script %}
+            <script src="{% static "rest_framework/js/jquery-1.11.3.min.js" %}"></script>
+            <script src="{% static "rest_framework/js/ajax-form.js" %}"></script>
+            <script src="{% static "rest_framework/js/csrf.js" %}"></script>
+            <script src="{% static "rest_framework/js/bootstrap.min.js" %}"></script>
+            <script src="{% static "rest_framework/js/prettify-min.js" %}"></script>
+            <script src="{% static "rest_framework/js/default.js" %}"></script>
+            <script>
+                $(document).ready(function() {
+                    $('form').ajaxForm();
+                });
+            </script>
+        {% endblock %}
+    </body>
+    {% endblock %}
+</html>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-83794325-1', 'auto');
+  ga('send', 'pageview');
+
+</script>

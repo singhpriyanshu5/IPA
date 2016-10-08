@@ -1,0 +1,85 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-83794325-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<script>
+	var time = new Date().getTime();
+
+	function refresh() {
+	    console.log("refresh!");
+	    $.ajax({
+	        url : "request/{{ group }}",
+	        type : "GET",
+	        data : {},
+
+	        success : function(json) {
+	            $('#post-text').val('');
+	        //  console.log(json);
+	        //  console.log("success");
+	          console.log(json['data']);
+	            $('.tablequeue').empty();
+
+	            for(var i = 0; i < json['data'].length; i++) {
+	            	var kata =  "";
+	            	kata = kata + '<tr align = \"center\" style=\"outline: thin solid\">';
+                    for (var j = 0; j < json['data'][i].length; j++) {
+                        if (j == 0) {
+                            kata = kata + '<td style = \"width:10%\">';
+                            kata = kata + '<b>' + json['data'][i][j] + '</b>';
+                        }else {
+                            kata = kata + '<td style = \"width:9%\" bgcolor = \"';
+                            if (json['data'][i][j][1] == 0) {
+                                kata = kata + 'white';
+                            }else if (json['data'][i][j][1] == 1) {
+                                kata = kata + 'yellow';
+                            }else {
+                                kata = kata + 'cyan';
+                            }
+                            kata = kata + '\">';
+                            kata = kata + json['data'][i][j][0];
+                        }
+                        kata = kata + '</td>';
+                    }
+                    for (var j = 0; j < 11-json['data'][i].length; j++) {
+                        kata = kata + '<td style = \"width:9%\"></td>';
+                    }
+                    $('.tablequeue').append(kata);
+				}
+	        },
+	    });
+		setTimeout(refresh, 2000);
+	};
+	setTimeout(refresh, 0);
+</script>
+<div class="container">
+<table class="table" >
+    <thead>
+<tr align = "center" >
+	<td colspan = 2 >Interview Queue for {{ group }}</td>
+</tr>
+</thead>
+    <tbody>
+<tr  >
+	<td style = "width:10%">DEPT</td>
+	<td style = "width:90%">Next 10 Queue</td>
+</tr>
+    </tbody>
+</table>
+<table  class = "tablequeue table">
+</table>
+</div>

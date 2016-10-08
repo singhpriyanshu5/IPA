@@ -1,0 +1,44 @@
+{% load rest_framework %}
+{% if request.user.interviewer %}
+<div id = "timer"></div>
+{% endif %}
+<table class="table table-striped">
+    <tbody>
+        {% for key, value in results.items %}
+        {% if key in details %}
+        <tr><th>{{ key|capfirst }}</th><td {{ value|add_nested_class }}>{{ value|format_value }}</td></tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% if request.user.interviewer %}
+<form class="button-form" action="./startinterview" data-method="POST">
+<button style="float: right" type="submit" class="btn btn-primary">Start Interview</button>
+</form>
+<form class="button-form" action="./cancel/">
+<button href="./cancel/" style="float: right" type="submit" class="btn btn-primary">Put Back to Queue</button>
+</form>
+<form class="button-form" action="./absent" data-method="GET">
+<button style="float: right" type="submit" class="btn btn-primary">Mark as Absent</button>
+</form>
+{% endif %}
+ 
+<script>
+	var time = new Date("{{ results.last_action.isoformat }}");
+	function refresh() {
+		timer.innerHTML = "Time elapsed : " + parseInt(Math.round((new Date().getTime() - time)/1000)) + " seconds";
+		setTimeout(refresh, 1000);
+	}
+
+    setTimeout(refresh, 0);
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-83794325-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
