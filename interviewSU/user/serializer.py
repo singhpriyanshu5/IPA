@@ -167,40 +167,53 @@ class InterviewAdminSerializer(serializers.ModelSerializer):
 
 
 class IntervieweeRegistrationSerializer(serializers.ModelSerializer):
-    email = serializers.CharField(
+    email = serializers.CharField (
         source='user.username',
         style={'placeholder': 'btp@e.ntu.edu.sg'.lower()},
         validators=[EmailValidator()],
     )
-    password = serializers.CharField(
+    password = serializers.CharField (
         source='user.password', 
         write_only=True, 
         allow_blank=True, 
         style={'placeholder': 'Final Fantasy', 'input_type': 'password'},
     )
-    name = serializers.CharField(
+    name = serializers.CharField (
         style={'placeholder': 'Donald Trump'},
         validators=[RegexValidator('^[A-Za-z ]+$', 'Enter a valid name.')],
     )
-    matricNumber = serializers.CharField(
+    matric_number = serializers.CharField (
         style={'placeholder': 'U1234567A'},
         validators=[RegexValidator('^[A-Z][0-9]{7}[A-Z]$', 'Enter a valid matric number.')],
     )
-    year = serializers.IntegerField(
+    year = serializers.IntegerField (
         style={'placeholder': 4},
         validators=[MinValueValidator(1, 'Enter a valid year of study'), MaxValueValidator(8, 'Enter a valid year of study')],
     )
-    major = serializers.CharField(
+    major = serializers.CharField (
         style={'placeholder': 'Mathematical Science'},
     )
-    phone = serializers.CharField(
+    phone = serializers.CharField (
         style={'placeholder': '12345678'},
         validators=[RegexValidator('^\+?[-0-9 ]{6,20}$', 'Enter a valid phone number')],
+    )
+    hall = serializers.CharField (
+        style={'placeholder': 'Binjai Hall'},
+    )
+    other_ECA = serializers.CharField (
+        style={'placeholder': 'SCSE Club, CEE Club, ...'},
+        required=False
+    )
+    exchange_this_semester = serializers.BooleanField (
+      
     )
 
     class Meta:
         model = Interviewee
-        fields = ('id', 'email', 'password', 'name', 'matricNumber', 'year', 'major', 'phone')
+        fields = (
+            'id', 'email', 'password', 'name', 'matric_number', 'year', 
+            'major', 'phone', 'hall', 'other_ECA', 'exchange_this_semester',
+        )
 
     def is_valid(self, raise_exception=False):
         self.initial_data['email'] = self.initial_data['email'].lower()
@@ -208,16 +221,15 @@ class IntervieweeRegistrationSerializer(serializers.ModelSerializer):
 
         try:
             User.objects.get(username=self.initial_data['email'])
-            if not ('email' in self._errors):
-                self._errors['email'] = ['This email is already registered']
+            self._errors['email'] = ['This email is already registered']
             error = False
         except:
             pass
 
         try:
-            Interviewee.objects.get(matricNumber=self.initial_data['matricNumber'])
-            if not ('matricNumber' in self._errors):
-                self._errors['matricNumber'] = ['This matric number is already registered']
+            Interviewee.objects.get(matricNumber=self.initial_data['matric_number'])
+            if not ('matric_number' in self._errors):
+                self._errors['matric_number'] = ['This matric number is already registered']
         except:
             return error
 
