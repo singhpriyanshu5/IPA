@@ -16,10 +16,11 @@ class InterviewRegistrationSerializer(serializers.ModelSerializer):
     queueNumber = serializers.SerializerMethodField('cari_queue')
     group = serializers.CharField(source='department.group.name', read_only=True)
     url = serializers.CharField(source='pk', read_only=True)
+    experience = serializers.CharField(style={'base_template': 'textarea.html'})
 
     class Meta:
         model = InterviewRegister
-        fields = ('id', 'group', 'department', 'queueNumber', 'url')
+        fields = ('id', 'group', 'department', 'queueNumber', 'url', 'experience')
 
     def cari_queue(self, obj):
         cnt = 0

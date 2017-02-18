@@ -52,6 +52,7 @@ class InterviewRegister(models.Model):
     interviewee = models.ForeignKey(Interviewee, related_name="interviewRegister")
     department = models.ForeignKey(InterviewDepartment, related_name="interviewRegister")
     queueNumber = models.IntegerField()
+    experience = models.CharField(max_length=500, default='')
     # TODO: remove magic number
     status = models.IntegerField()
     customAnswer = models.TextField(blank=True)
