@@ -16,7 +16,9 @@ class InterviewRegistrationSerializer(serializers.ModelSerializer):
     queueNumber = serializers.SerializerMethodField('cari_queue')
     group = serializers.CharField(source='department.group.name', read_only=True)
     url = serializers.CharField(source='pk', read_only=True)
-    experience = serializers.CharField(style={'base_template': 'textarea.html'})
+    experience = serializers.CharField(
+        style={'base_template': 'textarea.html'},
+    )
 
     class Meta:
         model = InterviewRegister
@@ -59,6 +61,7 @@ class InterviewRegistrationSerializer(serializers.ModelSerializer):
         validated_data['status'] = 0
         validated_data['department'].queueLast += 1
         validated_data['department'].save()
+        
         return super(InterviewRegistrationSerializer, self).create(validated_data)
 
 
@@ -98,7 +101,7 @@ class InterviewMainSerializer(serializers.ModelSerializer):
 
 class InterviewCallSerializer(serializers.ModelSerializer):
     queue_number = serializers.CharField(source='queueNumber')
-    matric = serializers.CharField(source='interviewee.matricNumber')
+    matric = serializers.CharField(source='interviewee.matric_number')
     name = serializers.CharField(source='interviewee.name')
 
     class Meta:
@@ -107,7 +110,7 @@ class InterviewCallSerializer(serializers.ModelSerializer):
 
 
 class InterviewResultSerializer(serializers.ModelSerializer):
-    matric = serializers.CharField(source='matricNumber')
+    matric = serializers.CharField(source='matric_number')
     accepted = serializers.SerializerMethodField('generateaccepted')
 
     def generateaccepted(self, obj):
@@ -124,7 +127,7 @@ class InterviewResultSerializer(serializers.ModelSerializer):
 class InterviewJudgeSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='id')
     queue = serializers.CharField(source='queueNumber')
-    matric = serializers.CharField(source='interviewee.matricNumber')
+    matric = serializers.CharField(source='interviewee.matric_number')
     name = serializers.CharField(source='interviewee.name')
     result = serializers.SerializerMethodField()
 
@@ -159,7 +162,7 @@ class InterviewHomeSerializer(serializers.ModelSerializer):
 
 class InterviewAdminSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source='id')
-    matric = serializers.CharField(source='interviewee.matricNumber')
+    matric = serializers.CharField(source='interviewee.matric_number')
     name = serializers.CharField(source='interviewee.name')
 
     class Meta:
