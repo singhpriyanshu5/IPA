@@ -102,7 +102,7 @@ class InterviewAdminViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, mi
                 request.user.interviewer.status = 0
                 instance.save()
                 request.user.interviewer.save()
-            return HttpResponseRedirect('../../')
+            return HttpResponseRedirect('/admin')
 
     @detail_route()
     def cancel(self, request, pk):

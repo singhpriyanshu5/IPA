@@ -58,7 +58,7 @@ ROOT_URLCONF = 'interview.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'website/templates/rest_framework'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
