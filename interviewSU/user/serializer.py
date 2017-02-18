@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Interviewee, InterviewRegister, InterviewDepartment, InterviewGroup
-from django.core.validators import EmailValidator
+from django.core.validators import EmailValidator, RegexValidator, MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 
 class InterviewGroupSerializer(serializers.ModelSerializer):
@@ -167,13 +167,36 @@ class InterviewAdminSerializer(serializers.ModelSerializer):
 
 
 class IntervieweeRegistrationSerializer(serializers.ModelSerializer):
-    email = serializers.CharField(source='user.username',style={'placeholder': 'BERTIL.ANDERSSON@NTU.EDU.SG'.lower()})
-    password = serializers.CharField(source='user.password', write_only=True, allow_blank=True, style={'placeholder': 'Passw0rd', 'input_type': 'password'},)
-    name = serializers.CharField(style={'placeholder': 'Bertil Andersson'})
-    matricNumber = serializers.CharField(style={'placeholder': 'U1234567A'})
-    year = serializers.IntegerField(style={'placeholder': 4})
-    major = serializers.CharField(style={'placeholder': 'Chemistry'})
-    phone = serializers.CharField(style={'placeholder': '65148331'})
+    email = serializers.CharField(
+        source='user.username',
+        style={'placeholder': 'btp@e.ntu.edu.sg'.lower()},
+        validators=[EmailValidator()],
+    )
+    password = serializers.CharField(
+        source='user.password', 
+        write_only=True, 
+        allow_blank=True, 
+        style={'placeholder': 'Final Fantasy', 'input_type': 'password'},
+    )
+    name = serializers.CharField(
+        style={'placeholder': 'Donald Trump'},
+        validators=[RegexValidator('^[A-Za-z ]+$', 'Enter a valid name.')],
+    )
+    matricNumber = serializers.CharField(
+        style={'placeholder': 'U1234567A'},
+        validators=[RegexValidator('^[A-Z][0-9]{7}[A-Z]$', 'Enter a valid matric number.')],
+    )
+    year = serializers.IntegerField(
+        style={'placeholder': 4},
+        validators=[MinValueValidator(1, 'Enter a valid year of study'), MaxValueValidator(8, 'Enter a valid year of study')],
+    )
+    major = serializers.CharField(
+        style={'placeholder': 'Mathematical Science'},
+    )
+    phone = serializers.CharField(
+        style={'placeholder': '12345678'},
+        validators=[RegexValidator('^\+?[-0-9 ]{6,20}$', 'Enter a valid phone number')],
+    )
 
     class Meta:
         model = Interviewee
@@ -183,11 +206,6 @@ class IntervieweeRegistrationSerializer(serializers.ModelSerializer):
         self.initial_data['email'] = self.initial_data['email'].lower()
         error = super(IntervieweeRegistrationSerializer, self).is_valid(raise_exception = raise_exception)
 
-        try:
-            EmailValidator()(self.initial_data['email'])
-        except ValidationError:
-            self._errors['email'] = ["Please enter a valid Email"]
-            error = False
         try:
             User.objects.get(username=self.initial_data['email'])
             if not ('email' in self._errors):
