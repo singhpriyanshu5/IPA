@@ -33,7 +33,7 @@ class Interviewee(models.Model):
     major = models.CharField(max_length=50)
     phone = models.CharField(max_length=50)
     hall = models.CharField(max_length=50)
-    otherECA = models.CharField(max_length=100, default='')
+    other_ECA = models.CharField(max_length=100, default='')
     exchange_this_semester = models.BooleanField(default=False)
     countAccepted = models.IntegerField(default=0)
 
