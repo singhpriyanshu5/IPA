@@ -10,7 +10,6 @@ router.register(r'user', IntervieweeViewSet, base_name='user')
 router.register(r'admin', InterviewAdminViewSet, base_name='admin')
 router.register(r'judge', InterviewAdminJudgeViewSet, base_name='judge')
 router.register(r'result', InterviewResultSet, base_name='result')
-
 router.register(r'choosegroup', InterviewGroupChooseSet, base_name='result')
 
 urlpatterns = [

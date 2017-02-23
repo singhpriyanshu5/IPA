@@ -4,22 +4,27 @@
 <table class="table table-striped">
     <tbody>
         {% for key, value in results.items %}
-        {% if key in details %}
-        <tr><th>{{ key|capfirst }}</th><td {{ value|add_nested_class }}>{{ value|format_value }}</td></tr>
-        {% endif %}
+            {% if key in details %}
+                <tr>
+                    <th>{{ key|capfirst }}</th>
+                    <td {{ value|add_nested_class }}>{{ value|format_value }}</td>
+                </tr>
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
 {% if request.user.interviewer %}
-<form class="button-form" action="./markpending">
-<button style="float: right" type="submit" class="btn btn-primary">Mark as Pending</button>
-</form>
-<form class="button-form" action="./cancel/">
-<button style="float: right" type="submit" class="btn btn-primary">Put Back to Queue</button>
-</form>
-<form class="button-form" action="./markaccept">
-<button style="float: right" type="submit" class="btn btn-primary">Mark as Accept</button>
-</form>
+    <form class="button-form" action="./markpending">
+        <button style="float: right" type="submit" class="btn btn-primary">Pending</button>
+    </form>
+    
+    <form class="button-form" action="./cancel/">
+        <button style="float: right" type="submit" class="btn btn-primary">Put Back to Queue</button>
+    </form>
+    
+    <form class="button-form" action="./markaccept">
+        <button style="float: right" type="submit" class="btn btn-primary">Accept</button>
+    </form>
 {% endif %}
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

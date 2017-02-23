@@ -13,13 +13,13 @@
 </table>
 {% if request.user.interviewer %}
 <form class="button-form" action="./startinterview" data-method="POST">
-<button style="float: right" type="submit" class="btn btn-primary">Start Interview</button>
+<button style="float: right" type="submit" class="btn btn-primary">Start</button>
 </form>
 <form class="button-form" action="./cancel/">
 <button href="./cancel/" style="float: right" type="submit" class="btn btn-primary">Put Back to Queue</button>
 </form>
 <form class="button-form" action="./absent" data-method="GET">
-<button style="float: right" type="submit" class="btn btn-primary">Mark as Absent</button>
+<button style="float: right" type="submit" class="btn btn-primary">Absent</button>
 </form>
 {% endif %}
  

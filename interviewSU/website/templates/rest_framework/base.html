@@ -19,13 +19,14 @@
                     <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap.min.css" %}"/>
                     <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap-tweaks.css" %}"/>
                 {% endblock %}
+                
                 <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/prettify.css" %}"/>
                 <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/default.css" %}"/>
             {% endblock %}
 
         {% endblock %}
-    </head>
-
+    </head>    
+    
     {% block body %}
     <body class="{% block bodyclass %}{% endblock %}">
 
@@ -41,21 +42,26 @@
                                 </a>
                             {% endblock %}
                         </span>
+                        
                         {% if not user.is_authenticated %}
-                        <span><a class='navbar-brand' rel="nofollow" href='/user/'>Register new account</a></span>
+                            <span><a class='navbar-brand' rel="nofollow" href='/user/'>Register new account</a></span>
                         {% endif %}
+                        
                         {% if user.interviewee %}
-                        <span><a class='navbar-brand' rel="nofollow" href='/register/'>Queue Registration</a></span>
+                            <span><a class='navbar-brand' rel="nofollow" href='/register/'>Queue Registration</a></span>
                         {% endif %}
+                        
                         {% if user.interviewer %}
-                        <span><a class='navbar-brand' rel="nofollow" href='/admin/'>Admin Page</a></span>
-                        <span><a class='navbar-brand' rel="nofollow" href='/judge/'>Judging Page</a></span>
+                            <span><a class='navbar-brand' rel="nofollow" href='/admin/'>Interview</a></span>
+                            <span><a class='navbar-brand' rel="nofollow" href='/judge/'>Judging</a></span>
                         {% endif %}
+                        
                         {% if user.boss %}
-                        <span><a class='navbar-brand' rel="nofollow" href='/result/'>Result Page</a></span>
+                            <span><a class='navbar-brand' rel="nofollow" href='/result/'>Result</a></span>
                         {% endif %}
+                        
                         <ul class="nav navbar-nav pull-right">
-                            {% block userlinks %}
+                            {% block userlinks %}                                
                                 {% if user.is_authenticated %}
                                     {% optional_logout request user %}
                                 {% else %}

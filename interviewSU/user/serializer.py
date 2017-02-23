@@ -57,10 +57,12 @@ class InterviewRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         q = self.context['request'].user
         validated_data['interviewee'] = q.interviewee
+        
         validated_data['queueNumber'] = validated_data['department'].queueLast + 1
-        validated_data['status'] = 0
         validated_data['department'].queueLast += 1
         validated_data['department'].save()
+        
+        validated_data['status'] = 0
         
         return super(InterviewRegistrationSerializer, self).create(validated_data)
 
